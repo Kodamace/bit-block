@@ -6,14 +6,15 @@ const getBlocks = async (req, res) => {
   let d = new Date();
   let time_in_milliseconds = d.getTime();
   var url = `https://blockchain.info/blocks/${time_in_milliseconds}?format=json`;
-
-  console.log(req.params);
   try {
     var obj = await fetch(url);
 
     return res.send(obj);
-  } catch (e) {
-    return console.error(e);
+  } catch (error) {
+    return res.status(404).send({
+      error: error,
+      message: "Error getting blocks",
+    });
   }
 };
 
