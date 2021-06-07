@@ -7,9 +7,9 @@ const getBlocks = async (req, res) => {
   let time_in_milliseconds = d.getTime();
   var url = `https://blockchain.info/blocks/${time_in_milliseconds}?format=json`;
   try {
-    var obj = await fetch(url);
+    var dataOfrecentBlocks = await fetch(url);
 
-    return res.send(obj);
+    return res.send(dataOfrecentBlocks);
   } catch (error) {
     return res.status(404).send({
       error: error,
@@ -18,10 +18,130 @@ const getBlocks = async (req, res) => {
   }
 };
 
+const getConfirmations = async (addr) => {
+  var url = `https://blockchain.info/q/addressbalance/${addr}?confirmations=6`;
+
+  try {
+    var confirmations = await fetch(url);
+
+    return confirmations;
+  } catch (error) {
+    return console.error(error);
+  }
+};
+
+const getDifficulty = async () => {
+  var url = `https://blockchain.info/q/getdifficulty`;
+
+  try {
+    var difficulty = await fetch(url);
+
+    return difficulty;
+  } catch (error) {
+    return console.error(error);
+  }
+};
+
+const getMiner = async () => {
+  const miners = [
+    "ViaBTC",
+    "HuobiPool",
+    "SlushPool",
+    "BTCTOP",
+    "EMCDPool",
+    "Poolin",
+    "AntPool",
+    "F2Pool",
+  ];
+
+  miners.forEach((miner) => {
+    var url = `https://blockchain.info/blocks/${miner}?format=json`;
+
+    var blocksForMiner = [
+      { hash: "kdskfjsldfjdklsjfkds", value: miner },
+      { hash: "dfvdjdsiisjdfksdjkfss", value: miner },
+      { hash: "jhdfuyttebbbhejsoosss", value: miner },
+    ];
+    // var blocksForMiner = await fetch(url)
+
+    function reduceBlocksToMiners(objectArray, property) {
+      return objectArray.reduce(function (acc, obj) {
+        let key = property;
+        if (!acc[key]) {
+          acc[key] = [];
+        }
+        acc[key].push(obj);
+        return acc;
+      }, {});
+    }
+
+    let data = reduceBlocksToMiners(blocksForMiner, miner);
+
+    console.log(data);
+  });
+};
+
 const getSingleBlock = async (req, res) => {
   const { block_hash } = req.params;
-  const url = `https://blockchain.info/rawblock/${block_hash}`;
-  const id = req.params.id;
+  var url = `https://blockchain.info/rawblock/${block_hash}`;
+
+  const minersDataBlocks = await getMiner();
+  try {
+    var obj = await fetch(url);
+
+    const {
+      hash,
+      time,
+      height,
+      n_tx,
+      mrkl_root,
+      ver,
+      bits,
+      weight,
+      size,
+      nonce,
+      fee,
+      tx,
+    } = obj;
+
+    const date = new Date(time * 1000);
+
+    const timestamp = date.toLocaleDateString();
+
+    let transactionVolume = tx.reduce(function (accumulator, transaction) {
+      return accumulator + transaction.vout_sz;
+    }, 0);
+
+    const confirmationsAddr = tx[0].out[0].addr;
+
+    var confirmations = await getConfirmations(confirmationsAddr);
+
+    var difficulty = await getDifficulty();
+
+    res.send({
+      hash: hash,
+      timestamp: timestamp,
+      height: height,
+      numberOfTransactions: n_tx,
+      mrkl_root: mrkl_root,
+      ver: ver,
+      bits: bits,
+      weight: weight,
+      size: size,
+      nonce: nonce,
+      fee: fee,
+      transactionVolume: transactionVolume,
+      confirmations: confirmations,
+      difficulty: difficulty,
+      miner: "miner sting to still find",
+    });
+  } catch (error) {
+    res.status(404).send({
+      error: error,
+      message:
+        "unable to get block data something went wrong getting a single block",
+    });
+  }
 };
 
 const searchBlocks = async (req, res) => {
