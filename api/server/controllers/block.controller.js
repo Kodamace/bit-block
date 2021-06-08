@@ -1,15 +1,45 @@
 const bent = require("bent");
 
 const fetch = bent("json");
+const getaextraDataForBlock = async (hash) => {
+  var url = `https://blockchain.info/rawblock/${hash}`;
+
+  try {
+    var extraDataForBlock = await fetch(url);
+
+    return extraDataForBlock;
+  } catch (error) {
+    return console.error(error);
+  }
+};
 
 const getBlocks = async (req, res) => {
   let d = new Date();
   let time_in_milliseconds = d.getTime();
   var url = `https://blockchain.info/blocks/${time_in_milliseconds}?format=json`;
-  try {
-    var dataOfrecentBlocks = await fetch(url);
 
-    return res.send(dataOfrecentBlocks);
+  const miners = [
+    "ViaBTC",
+    "HuobiPool",
+    "SlushPool",
+    "BTCTOP",
+    "EMCDPool",
+    "Poolin",
+    "AntPool",
+    "F2Pool",
+  ];
+  try {
+    var dataOfRecentBlocks = await fetch(url);
+
+    const updatedData = dataOfRecentBlocks.map((block) => {
+      const data = {
+        ...block,
+        miner: miners[Math.floor(Math.random() * 9)],
+      };
+      return data;
+    });
+
+    return res.send(updatedData);
   } catch (error) {
     return res.status(404).send({
       error: error,
@@ -54,6 +84,8 @@ const getMiner = async () => {
     "F2Pool",
   ];
 
+  var ourArray = [];
+
   miners.forEach((miner) => {
     var url = `https://blockchain.info/blocks/${miner}?format=json`;
 
@@ -64,21 +96,23 @@ const getMiner = async () => {
     ];
     // var blocksForMiner = await fetch(url)
 
-    function reduceBlocksToMiners(objectArray, property) {
-      return objectArray.reduce(function (acc, obj) {
-        let key = property;
-        if (!acc[key]) {
-          acc[key] = [];
-        }
-        acc[key].push(obj);
-        return acc;
-      }, {});
-    }
+    // function reduceBlocksToMiners(objectArray, property) {
+    //   return objectArray.reduce(function (acc, obj) {
+    //     let key = property;
+    //     if (!acc[key]) {
+    //       acc[key] = [];
+    //     }
+    //     acc[key].push(obj);
+    //     return acc;
+    //   }, {});
+    // }
 
-    let data = reduceBlocksToMiners(blocksForMiner, miner);
-
-    console.log(data);
+    // let data = reduceBlocksToMiners(blocksForMiner, miner);
+    ourArray = [...ourArray, ...blocksForMiner];
   });
+  const data = ourArray.find((obj) => obj.hash === "kdskfjsldfjdklsjfkds");
+
+  return data.value;
 };
 
 const getSingleBlock = async (req, res) => {
@@ -118,6 +152,8 @@ const getSingleBlock = async (req, res) => {
 
     var difficulty = await getDifficulty();
 
+    var miner = await getMiner();
+
     res.send({
       hash: hash,
       timestamp: timestamp,
@@ -133,7 +169,7 @@ const getSingleBlock = async (req, res) => {
       transactionVolume: transactionVolume,
       confirmations: confirmations,
       difficulty: difficulty,
-      miner: "miner sting to still find",
+      miner: miner,
     });
   } catch (error) {
     res.status(404).send({
