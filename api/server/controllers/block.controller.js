@@ -1,17 +1,6 @@
 const bent = require("bent");
 
 const fetch = bent("json");
-const getaextraDataForBlock = async (hash) => {
-  var url = `https://blockchain.info/rawblock/${hash}`;
-
-  try {
-    var extraDataForBlock = await fetch(url);
-
-    return extraDataForBlock;
-  } catch (error) {
-    return console.error(error);
-  }
-};
 
 const getBlocks = async (req, res) => {
   let d = new Date();
@@ -81,6 +70,8 @@ const getDifficulty = async () => {
   }
 };
 
+// to get all the vlock for each pool we woul have done this
+
 const getMiner = async () => {
   const miners = [
     "ViaBTC",
@@ -103,20 +94,7 @@ const getMiner = async () => {
       { hash: "dfvdjdsiisjdfksdjkfss", value: miner },
       { hash: "jhdfuyttebbbhejsoosss", value: miner },
     ];
-    // var blocksForMiner = await fetch(url)
 
-    // function reduceBlocksToMiners(objectArray, property) {
-    //   return objectArray.reduce(function (acc, obj) {
-    //     let key = property;
-    //     if (!acc[key]) {
-    //       acc[key] = [];
-    //     }
-    //     acc[key].push(obj);
-    //     return acc;
-    //   }, {});
-    // }
-
-    // let data = reduceBlocksToMiners(blocksForMiner, miner);
     ourArray = [...ourArray, ...blocksForMiner];
   });
   const data = ourArray.find((obj) => obj.hash === "kdskfjsldfjdklsjfkds");
@@ -167,15 +145,7 @@ const getSingleBlock = async (req, res) => {
       return accumulator + transaction.vout_sz;
     }, 0);
 
-    // const confirmationsAddr = tx[0].out[0].addr;
-
-    // let txIds = tx.reduce((acc, curr) => {
-    //   return [...acc, curr.hash];
-    // }, []);
-
     const difficulty = await getDifficulty();
-
-    // var confirmations = await getConfirmations(confirmationsAddr);
 
     const objectData = {
       hash: hash,
@@ -205,10 +175,6 @@ const getSingleBlock = async (req, res) => {
         "unable to get block data something went wrong getting a single block",
     });
   }
-};
-
-const searchBlocks = async (req, res) => {
-  // console.log(req.params);
 };
 
 module.exports = {

@@ -1,7 +1,5 @@
-import React, { FunctionComponent } from 'react';
-import {useHistory} from 'react-router-dom'
+import React from 'react';
 import './App.css';
-import { StyledButton, StyledCoin, StyledHomePage } from './styles/app-main.style';
 
 import {
   BrowserRouter as Router,
@@ -17,32 +15,30 @@ import BlockPage from './features/block/BlockPage';
 const App = () => {
 
   return (
-      <Router>
-            <Switch>
-              <Route
-                exact
-                path="/"
-                render={() => (
-                  <React.Fragment>
-                    <HomePage />
-                  </React.Fragment>
-                )}
-              />
-  
-              <Route
-                exact
-                path="/blocks"
-                render={() => <BlocksPage />}
-              />
-  
-              <Route
-                exact
-                path="/block/:hash"
-                render={() => <BlockPage />}
-              />
-              <Redirect to="/" />
-            </Switch>
-      </Router>
+    <Router>
+      <Switch>
+        <Route
+          exact
+          path="/"
+          render={() => (
+            <React.Fragment>
+              <HomePage />
+            </React.Fragment>
+          )}
+        />
+        <Route
+          exact
+          path="/blocks"
+          render={() => <BlocksPage />}
+        />
+        <Route
+          exact
+          path="/block/:hash"
+          render={() => <BlockPage />}
+        />
+        <Redirect to="/" />
+      </Switch>
+    </Router>
   );
 }
 

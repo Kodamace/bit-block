@@ -1,7 +1,5 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { getBlocks, getSingleBlock } from '../../api/block';
-import { client } from '../../api/client';
-import { RootState, AppThunk } from '../../app/store';
 
 export interface IBlock {
   hash: string;
@@ -56,6 +54,7 @@ export const blocksSlice = createSlice({
     builder
       .addCase(getBlocks.pending, (state) => {
         state.status = 'loading';
+        state.loading = true;
       })
       .addCase(getBlocks.fulfilled, (state, action) => {
         // state.status = 'idle';
@@ -66,6 +65,8 @@ export const blocksSlice = createSlice({
           return acc;
         }, {})
         state.timestamp = new Date().toLocaleTimeString()
+        state.loading = false;
+        state.status = 'done'
       })
       // .addCase(getSingleBlock.pending, (state) => {
       //   state.status = 'loading'

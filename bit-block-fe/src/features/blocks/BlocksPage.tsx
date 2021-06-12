@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { getBlocks, getSingleBlock } from '../../api/block'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
-import {SearchAppBar} from '../../components/SearchHeader';
+import { SearchAppBar } from '../../components/SearchHeader';
 import { CustomPaginationActionsTable } from '../../components/Table'
 import { IBlock } from './blocksSlice';
 
@@ -14,6 +14,8 @@ function BlocksPage() {
     const dispatch = useAppDispatch()
 
     const blocks: IBlock[] = useAppSelector((state) => state.blocks.blocks)
+    const loading = useAppSelector((state) => state.blocks.loading)
+    const satus = useAppSelector((state) => state.blocks.status)
 
     const timestamp = useAppSelector((state) => state.blocks.timestamp)
 
@@ -28,10 +30,10 @@ function BlocksPage() {
 
     // create an array of hashes that are currently in the dom to be used to make individual api calls for each hash 
     let arrayOfHashes = Object.keys(blocks).map((hash) => hash).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-    
+
     console.log(currentTime)
     useEffect(() => {
-        if(parseInt(currentTime[1]) - parseInt(lastRetreivedMins[1]) > 10 || !timestamp) {
+        if (parseInt(currentTime[1]) - parseInt(lastRetreivedMins[1]) > 10 || !timestamp) {
             dispatch(getBlocks())
         }
     }, [currentTime])
@@ -55,17 +57,25 @@ function BlocksPage() {
 
     return (
         <div>
-            <SearchAppBar searchTerm={searchTerm} setSearchTerm={setSearchTerm}showSearchBar={true}  />
-            <div style={{padding: 30}}>
-            <CustomPaginationActionsTable
-            showTablePagination={true}
-             page={page} 
-             setPage={setPage}
-             setRowsPerPage={setRowsPerPage}
-             rowsPerPage={rowsPerPage} 
-             rows={!searchTerm ? arrayOfBlocks : arrayOfBlocks.filter((block) => block.hash.includes(searchTerm))} 
-             />
-            </div>
+            {loading && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <p>Loading page please wait...</p>
+            </div>}
+            {
+                !loading && blocks &&
+                <div>
+                    <SearchAppBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} showSearchBar={true} />
+                    <div style={{ padding: 30 }}>
+                        <CustomPaginationActionsTable
+                            showTablePagination={true}
+                            page={page}
+                            setPage={setPage}
+                            setRowsPerPage={setRowsPerPage}
+                            rowsPerPage={rowsPerPage}
+                            rows={!searchTerm ? arrayOfBlocks : arrayOfBlocks.filter((block) => block.hash.includes(searchTerm))}
+                        />
+                    </div>
+                </div>
+            }
         </div>
     )
 }
