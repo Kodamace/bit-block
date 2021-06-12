@@ -37,7 +37,7 @@ const App = () => {
   
               <Route
                 exact
-                path="/block/:id"
+                path="/block/:hash"
                 render={() => <BlockPage />}
               />
               <Redirect to="/" />

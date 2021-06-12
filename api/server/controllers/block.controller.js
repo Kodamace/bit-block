@@ -28,18 +28,27 @@ const getBlocks = async (req, res) => {
     "AntPool",
     "F2Pool",
   ];
-  try {
-    var dataOfRecentBlocks = await fetch(url);
 
-    const updatedData = dataOfRecentBlocks.map((block) => {
-      const data = {
-        ...block,
-        miner: miners[Math.floor(Math.random() * 9)],
-      };
-      return data;
+  const difficulty = await getDifficulty();
+
+  try {
+    var dataOfRecentBlocks = await fetch(url).then((blocks) => {
+      const updatedData = blocks.map((block) => {
+        const date = new Date(block.time * 1000);
+
+        const timestamp = date.toLocaleDateString();
+        const data = {
+          ...block,
+          difficulty: difficulty,
+          miner: miners[Math.floor(Math.random() * 8)],
+          timestamp: timestamp,
+        };
+        return data;
+      });
+      return updatedData;
     });
 
-    return res.send(updatedData);
+    return res.send(dataOfRecentBlocks);
   } catch (error) {
     return res.status(404).send({
       error: error,
@@ -119,7 +128,17 @@ const getSingleBlock = async (req, res) => {
   const { block_hash } = req.params;
   var url = `https://blockchain.info/rawblock/${block_hash}`;
 
-  const minersDataBlocks = await getMiner();
+  const miners = [
+    "ViaBTC",
+    "HuobiPool",
+    "SlushPool",
+    "BTCTOP",
+    "EMCDPool",
+    "Poolin",
+    "AntPool",
+    "F2Pool",
+  ];
+
   try {
     var obj = await fetch(url);
 
@@ -138,39 +157,47 @@ const getSingleBlock = async (req, res) => {
       tx,
     } = obj;
 
-    const date = new Date(time * 1000);
+    const date = new Date(time);
 
-    const timestamp = date.toLocaleDateString();
+    const timeStringStamp = date.toLocaleDateString().split("/");
+
+    const timestamp = timeStringStamp.join("-");
 
     let transactionVolume = tx.reduce(function (accumulator, transaction) {
       return accumulator + transaction.vout_sz;
     }, 0);
 
-    const confirmationsAddr = tx[0].out[0].addr;
+    // const confirmationsAddr = tx[0].out[0].addr;
 
-    var confirmations = await getConfirmations(confirmationsAddr);
+    // let txIds = tx.reduce((acc, curr) => {
+    //   return [...acc, curr.hash];
+    // }, []);
 
-    var difficulty = await getDifficulty();
+    const difficulty = await getDifficulty();
 
-    var miner = await getMiner();
+    // var confirmations = await getConfirmations(confirmationsAddr);
 
-    res.send({
+    const objectData = {
       hash: hash,
+      confirmations: Math.floor(Math.random() * 5),
       timestamp: timestamp,
       height: height,
+      miner: miners[Math.floor(Math.random() * 8)],
       numberOfTransactions: n_tx,
+      difficulty: difficulty,
       mrkl_root: mrkl_root,
       ver: ver,
       bits: bits,
       weight: weight,
       size: size,
       nonce: nonce,
-      fee: fee,
       transactionVolume: transactionVolume,
-      confirmations: confirmations,
-      difficulty: difficulty,
-      miner: miner,
-    });
+      reward: "unknown",
+      fee: fee,
+      tx: tx,
+    };
+
+    res.send(objectData);
   } catch (error) {
     res.status(404).send({
       error: error,

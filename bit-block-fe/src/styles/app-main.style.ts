@@ -17,6 +17,15 @@ export const StyledCoin = styled(Button)`
       }
   }
 `
+export const StyledCoinHead = styled(Button)`
+&.MuiButtonBase-root {
+    background-color: #ffcb47;
+    border-radius: 100%;
+    font-size: 20px;
+    height: 60px;
+    margin-right: 10px;
+}
+`
 export const StyledButton = styled(Button)`
   &.MuiButtonBase-root {
       background-color: #ffcb47;

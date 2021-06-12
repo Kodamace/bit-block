@@ -12,8 +12,10 @@ export const getBlocks = createAsyncThunk("blocks/getBlocks", async (value) => {
 export const getSingleBlock = createAsyncThunk(
   "block/getSingleBlock",
   async (hash: string) => {
+ 
     const response = await client.get(`${blocksEndPoint}/${hash}`);
     // The value we return becomes the `fulfilled` action payload
+
     return response;
   }
 );

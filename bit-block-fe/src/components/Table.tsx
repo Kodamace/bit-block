@@ -17,6 +17,8 @@ import LastPageIcon from '@material-ui/icons/LastPage';
 import { AnyCnameRecord } from 'dns';
 import { IBlock } from '../features/blocks/blocksSlice';
 import TableHead from './TableHead';
+import { Link } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
 
 const useStyles1 = makeStyles((theme) => ({
   root: {
@@ -96,17 +98,21 @@ const useStyles2 = makeStyles({
 });
 
   interface IPaginationActions {
-    rows: IBlock[]
+    rows: IBlock[];
+    page: number;
+    rowsPerPage: number;
+    setPage: (number: number) => void;
+    setRowsPerPage: (number: number) => void;
+    showTablePagination: boolean;
   }
 
-export const CustomPaginationActionsTable: FunctionComponent<IPaginationActions> = ({rows})  => {
+export const CustomPaginationActionsTable: FunctionComponent<IPaginationActions> = ({ rows, page, rowsPerPage, showTablePagination, setPage, setRowsPerPage})  => {
   const classes = useStyles2();
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const history = useHistory();
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
-  const handleChangePage = (event: any, newPage: any) => {
+  const handleChangePage = (event: any, newPage: number) => {
     setPage(newPage);
   };
 
@@ -119,14 +125,15 @@ export const CustomPaginationActionsTable: FunctionComponent<IPaginationActions>
     <TableContainer component={Paper}>
       <Table className={classes.table} aria-label="custom pagination table">
         <TableBody>
+          <TableRow>
+            <TableCell  align="center">
+                Height
+            </TableCell>
             <TableCell align="center">
                 Hash
             </TableCell>
             <TableCell  align="center">
-                Height
-            </TableCell>
-            <TableCell  align="center">
-                Time
+                TimeStamp
             </TableCell>
             <TableCell  align="center">
                 Block Index
@@ -134,35 +141,46 @@ export const CustomPaginationActionsTable: FunctionComponent<IPaginationActions>
             <TableCell  align="center">
                 Miner
             </TableCell>
+          </TableRow>
           {(rowsPerPage > 0
             ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             : rows
-          ).map((row) => (
-            <TableRow key={row.hash}>
-              <TableCell style={{ width: 160 }} align="center">
-                {row.hash}
-              </TableCell>
-              <TableCell style={{ width: 160 }} align="center">
-                {row.height}
-              </TableCell>
-              <TableCell style={{ width: 160 }} align="center">
-                {row.time}
-              </TableCell>
-              <TableCell style={{ width: 160 }} align="center">
-                {row.block_index}
-              </TableCell>
-              <TableCell style={{ width: 160 }} align="center">
-                {row.miner}
-              </TableCell>
-            </TableRow>
-          ))}
+          ).map((row) => {
+            const { hash, height, timestamp, block_index, miner} = row;
 
+            const timestampArray = timestamp?.split('/');
+
+            const customTimestamp = timestampArray?.join('-')
+
+           return (
+            <TableRow key={hash}>
+                <TableCell style={{ width: 160 }} align="center">
+                  {height}
+                </TableCell>
+                <TableCell style={{ width: 160 }} align="center">
+                  <Link component='button' onClick={() => history.push(`/block/${hash}`)}>
+                    {hash}
+                  </Link>
+                </TableCell>
+                <TableCell style={{ width: 160 }} align="center">
+                  {customTimestamp}
+                </TableCell>
+                <TableCell style={{ width: 160 }} align="center">
+                  {block_index}
+                </TableCell>
+                <TableCell style={{ width: 160 }} align="center">
+                  {miner}
+                </TableCell>
+              </TableRow>
+           ) 
+          })}
           {emptyRows > 0 && (
             <TableRow style={{ height: 53 * emptyRows }}>
               <TableCell colSpan={6} />
             </TableRow>
           )}
         </TableBody>
+        {showTablePagination &&
         <TableFooter>
           <TableRow>
             <TablePagination
@@ -182,6 +200,7 @@ export const CustomPaginationActionsTable: FunctionComponent<IPaginationActions>
             />
           </TableRow>
         </TableFooter>
+        }
       </Table>
     </TableContainer>
   );
