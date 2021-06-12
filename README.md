@@ -5,7 +5,7 @@
 ### `Backend`
 clone the repo and then cd into bit-block/api and run npm install to install all the dependancies.
 
-then once finidhed installing run npm start
+then once finished installing run npm start
 
 this runs on port http://localhost:3002/
 
