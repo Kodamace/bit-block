@@ -14,4 +14,4 @@ cd into bit-block/bit-block-fe and run npm install to install all the dependanci
 
 then once finished installing run npm start 
 
-visit http://localhost:3000/ and have enjoy
+visit http://localhost:3000/ and enjoy
