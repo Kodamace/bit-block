@@ -3,7 +3,7 @@
 ### `Run the project`
 
 ### `Backend`
-clone the repo and then cd into bit-block/apis and run npm install to install all the dependancies.
+clone the repo and then cd into bit-block/api and run npm install to install all the dependancies.
 
 then once finidhed installing run npm start
 
