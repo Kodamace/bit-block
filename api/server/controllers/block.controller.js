@@ -180,5 +180,4 @@ const getSingleBlock = async (req, res) => {
 module.exports = {
   getBlocks,
   getSingleBlock,
-  searchBlocks,
 };
