@@ -61,7 +61,7 @@ export const BlockPage = () => {
 
     return (
         <>
-            <SearchAppBar searchTerm={''} setSearchTerm={() => { }} showSearchBar={false} />
+            <SearchAppBar setPage={() => { }} searchTerm={''} setSearchTerm={() => { }} showSearchBar={false} />
             {!loading && status === 'done' && arrayOfValues ? (
                 <>
                     <BlockTable headings={headings} values={values} />

@@ -63,7 +63,12 @@ function BlocksPage() {
             {
                 !loading && arrayOfBlocks.length > 0 &&
                 <div>
-                    <SearchAppBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} showSearchBar={true} />
+                    <SearchAppBar
+                        setPage={setPage}
+                        searchTerm={searchTerm}
+                        setSearchTerm={setSearchTerm}
+                        showSearchBar={true}
+                    />
                     <div style={{ padding: 30 }}>
                         <CustomPaginationActionsTable
                             showTablePagination={true}

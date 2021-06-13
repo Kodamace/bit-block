@@ -72,52 +72,56 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface IProps {
-  searchTerm: string;
+  searchTerm?: string;
   showSearchBar: boolean;
   setSearchTerm: (val: string) => any;
+  setPage: (e: any) => any;
 }
 
-export const SearchAppBar: FunctionComponent<IProps> = ({searchTerm, setSearchTerm, showSearchBar}) => {
+export const SearchAppBar: FunctionComponent<IProps> = ({ searchTerm, setSearchTerm, showSearchBar, setPage }) => {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
 
   return (
     <div className={classes.root}>
-      <AppBar style={{paddingTop: 15, paddingBottom: 15}} position="static">
+      <AppBar style={{ paddingTop: 15, paddingBottom: 15 }} position="static">
         <Toolbar>
-        <StyledCoinHead>$B</StyledCoinHead>
+          <StyledCoinHead>$B</StyledCoinHead>
           <Typography className={classes.title} variant="h6" noWrap>
             BIT-BLOCK
           </Typography>
           <div className={classes.search}>
-            {showSearchBar ? 
-                <>
-                  <div className={classes.searchIcon}>
-                    <SearchIcon />
-                  </div>
-                  <InputBase
+            {showSearchBar ?
+              <>
+                <div className={classes.searchIcon}>
+                  <SearchIcon />
+                </div>
+                <InputBase
                   placeholder="Search…"
                   classes={{
                     root: classes.inputRoot,
                     input: classes.inputInput,
                   }}
                   inputProps={{ 'aria-label': 'search' }}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </>
-                : <Link
-                    style={{color: '#fff'}}
-                    component="button"
-                    // variant="body2"
-                    onClick={() => {
-                      history.push('/blocks');
-                      dispatch(clearBlock())
-                    }}
-                  >
-                    <NavigateBeforeIcon style={{color: 'ffff'}} />
-                  </Link>
-              }
+                  onChange={(e) => {
+                    setPage(0)
+                    setSearchTerm(e.target.value)
+                  }}
+                />
+              </>
+              : <Link
+                style={{ color: '#fff' }}
+                component="button"
+                // variant="body2"
+                onClick={() => {
+                  history.push('/blocks');
+                  dispatch(clearBlock())
+                }}
+              >
+                <NavigateBeforeIcon style={{ color: 'ffff' }} />
+              </Link>
+            }
           </div>
         </Toolbar>
       </AppBar>
