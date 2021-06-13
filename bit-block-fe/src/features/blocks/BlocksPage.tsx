@@ -13,7 +13,7 @@ function BlocksPage() {
     const [searchTerm, setSearchTerm] = useState('')
     const dispatch = useAppDispatch()
 
-    const blocks: IBlock[] = useAppSelector((state) => state.blocks.blocks)
+    const blocks: any = useAppSelector((state) => state.blocks.blocks)
     const loading = useAppSelector((state) => state.blocks.loading)
     const satus = useAppSelector((state) => state.blocks.status)
 
@@ -61,7 +61,7 @@ function BlocksPage() {
                 <p>Loading page please wait...</p>
             </div>}
             {
-                !loading && blocks &&
+                !loading && arrayOfBlocks.length > 0 &&
                 <div>
                     <SearchAppBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} showSearchBar={true} />
                     <div style={{ padding: 30 }}>
