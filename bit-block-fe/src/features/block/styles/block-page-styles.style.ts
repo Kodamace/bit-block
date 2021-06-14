@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export const StyledTransactionsWrapper = styled.div`
-  padding: 150px;
+  padding: 30px;
 `
 export const StyledTransactionsList = styled.div`
   height: 450px;

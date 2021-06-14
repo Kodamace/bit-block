@@ -135,7 +135,7 @@ const getSingleBlock = async (req, res) => {
       tx,
     } = obj;
 
-    const date = new Date(time);
+    const date = new Date(time * 1000);
 
     const timeStringStamp = date.toLocaleDateString().split("/");
 

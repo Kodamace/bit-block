@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { getBlocks, getSingleBlock } from '../../api/block'
+import { getBlocks } from '../../api/block'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { SearchAppBar } from '../../components/SearchHeader';
 import { CustomPaginationActionsTable } from '../../components/Table'
 import { IBlock } from './blocksSlice';
+import SearchIcon from '@material-ui/icons/Search';
+import { useHistory } from 'react-router-dom';
+import Modal from 'react-modal';
+import { clearErrorMsg } from '../block/blockSlice';
+
 
 function BlocksPage() {
 
@@ -11,13 +16,28 @@ function BlocksPage() {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentTime, setCurrentTime] = useState<string[]>([])
     const [searchTerm, setSearchTerm] = useState('')
+    const [display, setDisplay] = useState('none')
+    const [modalIsOpen, setModalIsOpen] = useState(false)
     const dispatch = useAppDispatch()
+    const history = useHistory()
 
     const blocks: any = useAppSelector((state) => state.blocks.blocks)
     const loading = useAppSelector((state) => state.blocks.loading)
-    const satus = useAppSelector((state) => state.blocks.status)
+    const status = useAppSelector((state) => state.blocks.status)
+    const error = useAppSelector((state) => state.block.error)
 
     const timestamp = useAppSelector((state) => state.blocks.timestamp)
+
+    const customStyles = {
+        content: {
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)'
+        }
+    };
 
     // const lastRetreivedMins = getMinutes(timestampMills)
     const lastRetreivedMins = timestamp.split(':')
@@ -31,7 +51,6 @@ function BlocksPage() {
     // create an array of hashes that are currently in the dom to be used to make individual api calls for each hash 
     let arrayOfHashes = Object.keys(blocks).map((hash) => hash).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 
-    console.log(currentTime)
     useEffect(() => {
         if (parseInt(currentTime[1]) - parseInt(lastRetreivedMins[1]) > 10 || !timestamp) {
             dispatch(getBlocks())
@@ -55,6 +74,20 @@ function BlocksPage() {
     //     }
     // }, [arrayOfHashes])
 
+    useEffect(() => {
+        if (error.toLowerCase() === 'error') {
+            setModalIsOpen(true)
+        }
+    }, [error])
+
+
+    const handleModalClose = () => {
+        setModalIsOpen(false)
+        dispatch(clearErrorMsg())
+    }
+
+
+
     return (
         <div>
             {loading && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -63,12 +96,47 @@ function BlocksPage() {
             {
                 !loading && arrayOfBlocks.length > 0 &&
                 <div>
+                    <Modal
+                        isOpen={modalIsOpen}
+                        //   onAfterOpen={afterOpenModal}
+                        onRequestClose={() => handleModalClose()}
+                        style={customStyles}
+                        contentLabel="Error modal"
+                    >
+                        <span style={{ cursor: 'pointer', float: 'right' }} onClick={() => handleModalClose()} >X</span>
+                        <p>Sorry block not found</p>
+                        <p>Please check internet connection</p>
+                    </Modal>
                     <SearchAppBar
                         setPage={setPage}
                         searchTerm={searchTerm}
                         setSearchTerm={setSearchTerm}
                         showSearchBar={true}
                     />
+                    <div style={{ width: '100%', padding: '30px 230px', display: 'flex' }}>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <span style={{ marginRight: 80 }}><b>BLOCK EXPLORER</b></span>
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid grey' }}>
+                                <SearchIcon />
+                                <input
+                                    style={{ width: '600px', padding: 10, border: 'none' }}
+                                    placeholder="Search…"
+                                    value={searchTerm}
+                                    onChange={(e) => {
+                                        setPage(0)
+                                        setSearchTerm(e.target.value)
+                                    }}
+                                />
+                            </div>
+                        </div>
+                        <button style={{ padding: 10, marginLeft: 45 }} onClick={() => {
+                            if (!searchTerm) return window.alert('Please enter a value')
+                            if (!searchTerm.trim()) return window.alert('Can not search for empty values')
+                            history.push(`block/${searchTerm.trim()}`)
+                        }
+                        }>Search</button>
+                    </div>
+                    <h2 style={{ marginLeft: 50 }}>LATEST BLOCKS</h2>
                     <div style={{ padding: 30 }}>
                         <CustomPaginationActionsTable
                             showTablePagination={true}
@@ -76,7 +144,7 @@ function BlocksPage() {
                             setPage={setPage}
                             setRowsPerPage={setRowsPerPage}
                             rowsPerPage={rowsPerPage}
-                            rows={!searchTerm ? arrayOfBlocks : arrayOfBlocks.filter((block) => block.hash.includes(searchTerm))}
+                            rows={!searchTerm ? arrayOfBlocks : arrayOfBlocks.filter((block) => block.hash.includes(searchTerm.trim()))}
                         />
                     </div>
                 </div>

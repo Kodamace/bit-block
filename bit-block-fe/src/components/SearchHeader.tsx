@@ -94,10 +94,10 @@ export const SearchAppBar: FunctionComponent<IProps> = ({ searchTerm, setSearchT
           <div className={classes.search}>
             {showSearchBar ?
               <>
-                <div className={classes.searchIcon}>
+                {/* <div className={classes.searchIcon}>
                   <SearchIcon />
-                </div>
-                <InputBase
+                </div> */}
+                {/* <InputBase
                   placeholder="Search…"
                   classes={{
                     root: classes.inputRoot,
@@ -108,7 +108,7 @@ export const SearchAppBar: FunctionComponent<IProps> = ({ searchTerm, setSearchT
                     setPage(0)
                     setSearchTerm(e.target.value)
                   }}
-                />
+                /> */}
               </>
               : <Link
                 style={{ color: '#fff' }}

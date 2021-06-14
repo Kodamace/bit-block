@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux';
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { getSingleBlock } from '../../api/block';
 import { useAppSelector } from '../../app/hooks';
 import { SearchAppBar } from '../../components/SearchHeader';
@@ -12,6 +12,7 @@ import TransActions from './components/TransActions';
 export const BlockPage = () => {
     const params = useParams();
     const dispatch = useDispatch();
+    const history = useHistory();
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5)
@@ -59,11 +60,18 @@ export const BlockPage = () => {
 
     const arrayOfTransactions = block?.tx
 
+    useEffect(() => {
+        if (status.toLowerCase() === 'error') {
+            history.push('/blocks')
+        }
+    }, [status])
+
     return (
         <>
             <SearchAppBar setPage={() => { }} searchTerm={''} setSearchTerm={() => { }} showSearchBar={false} />
             {!loading && status === 'done' && arrayOfValues ? (
                 <>
+                    <h3 style={{ marginLeft: 50 }}>BTC/BLOCK</h3>
                     <BlockTable headings={headings} values={values} />
                     <TransActions
                         page={page}

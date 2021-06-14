@@ -18,42 +18,40 @@ const TransActions: FunctionComponent<IProps> = ({ arrayOfTransactions, page, ro
             <h3>Transactions</h3>
             <StyledTransactionsList>
                 {arrayOfTransactions && arrayOfTransactions.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((tx: any) => {
-                    const date = new Date(tx.time)
+                    const date = new Date(tx.time * 1000)
 
                     const timeStringStamp = date.toLocaleDateString().split("/");
 
                     const timestamp = timeStringStamp.join("-");
                     return (
-                        <Grid container justify='space-around'>
-                            <Grid item xs={6} sm={2}>
+                        <div style={{ display: 'flex' }}>
+                            <div style={{ float: 'left', width: '10%' }}>
                                 <p>Hash</p>
                                 <p>Fee</p>
-                            </Grid>
-                            <Grid item xs={6} sm={2}>
+                            </div>
+                            <div style={{ float: 'left', width: '20%' }}>
                                 <p style={{ overflow: 'scroll' }}>{tx.hash}</p>
-                                <p>{`${(tx.fee)}`}</p>
-                            </Grid>
-                            <Grid item xs={6} sm={2}>
+                                <p>{`${(tx.fee * 100000)}`}BTC</p>
+                            </div>
+                            <div style={{ float: 'left', width: '5%' }}>
                                 <br />
                                 <br />
                                 <p><ForwardIcon /></p>
-                            </Grid>
-                            <Grid item xs={6} sm={2}>
-                                <br />
-                                <br />
+                            </div>
+                            <div style={{ float: 'left', width: '35%', marginTop: 35 }}>
                                 {tx?.out.map((t: any) => (
-                                    <p style={{ overflow: 'scroll' }}>{t && t.addr && t.addr}</p>
+                                    <p style={{ width: 50 }}>{t && t.addr && t.addr.slice(0, 30)}...</p>
                                 ))}
-                            </Grid>
-                            <Grid item xs={6} sm={2}>
-                                <div style={{ textAlign: 'right' }}>
+                            </div>
+                            <div>
+                                <div style={{ textAlign: 'right', width: 200 }}>
                                     <p>{timestamp}</p>
                                     {tx.out.map((t: any) => (
-                                        <p style={{ marginLeft: 10 }}>{t.value} BTC</p>
+                                        <p style={{ marginLeft: 10 }}>{t.value * 500000} BTC</p>
                                     ))}
                                 </div>
-                            </Grid>
-                        </Grid>
+                            </div>
+                        </div>
                     )
                 })}
             </StyledTransactionsList>

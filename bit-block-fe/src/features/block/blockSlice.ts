@@ -25,12 +25,14 @@ export interface ISingleBlockState {
   block: ISingleBlock;
   loading: boolean;
   status: any;
+  error: string;
 }
 
 const initialState: ISingleBlockState = {
   block: <ISingleBlock>{},
   loading: false,
   status: 'idle',
+  error: ''
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -49,6 +51,9 @@ export const blockSlice = createSlice({
     clearBlock(state) {
       state.block = <ISingleBlock>{}
       state.status = 'idle'
+    },
+    clearErrorMsg(state) {
+      state.error = ''
     }
   },
   extraReducers: (builder) => {
@@ -62,9 +67,13 @@ export const blockSlice = createSlice({
         state.status = 'done';
         state.loading = false;
       })
+      .addCase(getSingleBlock.rejected, (state) => {
+        state.status = 'error'
+        state.error = 'error'
+      })
   },
 });
 
-export const { clearBlock } = blockSlice.actions;
+export const { clearBlock, clearErrorMsg } = blockSlice.actions;
 
 export default blockSlice.reducer;
