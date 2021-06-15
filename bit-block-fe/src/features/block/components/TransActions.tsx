@@ -36,7 +36,7 @@ const TransActions: FunctionComponent<IProps> = ({ arrayOfTransactions, page, ro
                             <div style={{ float: 'left', width: '5%' }}>
                                 <br />
                                 <br />
-                                <p><ForwardIcon /></p>
+                                <p><ForwardIcon style={{ color: 'green' }} /></p>
                             </div>
                             <div style={{ float: 'left', width: '35%', marginTop: 35 }}>
                                 {tx?.out.map((t: any) => (

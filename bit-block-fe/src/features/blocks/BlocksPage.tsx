@@ -113,9 +113,9 @@ function BlocksPage() {
                         setSearchTerm={setSearchTerm}
                         showSearchBar={true}
                     />
-                    <div style={{ width: '100%', padding: '30px 230px', display: 'flex' }}>
+                    <div style={{ width: '100%', padding: '30px 0px', display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
+                        <span><b>BLOCK EXPLORER</b></span>
                         <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <span style={{ marginRight: 80 }}><b>BLOCK EXPLORER</b></span>
                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid grey' }}>
                                 <SearchIcon />
                                 <input
